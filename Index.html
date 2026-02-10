@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎲 Yahtzee Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+```
+    :root {
+        --primary: #6c5ce7;
+        --secondary: #a29bfe;
+        --accent: #fd79a8;
+        --dark: #2d3436;
+        --light: #dfe6e9;
+        --success: #00b894;
+        --warning: #fdcb6e;
+        --danger: #e17055;
+        --dice-size: 60px;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: var(--dark);
+        overflow-x: hidden;
+    }
+
+    .container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 10px;
+    }
+
+    header {
+        text-align: center;
+        padding: 15px 0;
+        position: relative;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .menu-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        padding: 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        z-index: 100;
+        transition: all 0.2s;
+    }
+
+    .menu-btn:active {
+        transform: translateY(-50%) scale(0.95);
+        background: rgba(255,255,255,0.3);
+    }
+
+    /* Side Menu */
+    .side-menu {
+        position: fixed;
+        top: 0;
+        right: -300px;
+        width: 280px;
+        height: 100vh;
+        background: white;
+        z-index: 1000;
+        transition: right 0.3s ease;
+        box-shadow: -5px 0 30px rgba(0,0,0,0.3);
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .side-menu.open {
+        right: 0;
+    }
+
+    .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .menu-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+
+    .menu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid var(--light);
+    }
+
+    .menu-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .close-menu {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 5px;
+        color: var(--dark);
+    }
+
+    .menu-item {
+        padding: 15px;
+        margin: 10px 0;
+        background: var(--light);
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+        user-select: none;
+    }
+
+    .menu-item:active {
+        transform: scale(0.98);
+    }
+
+    .menu-item.danger {
+        background: var(--danger);
+        color: white;
+    }
+
+    /* Setup Screen */
+    .setup-screen {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        margin: 10px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    .setup-title {
+        font-size: 1.5rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .player-input {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+
+    .player-input input[type="text"] {
+        flex: 1;
+        padding: 12px;
+        border: 2px solid var(--secondary);
+        border-radius: 10px;
+        font-size: 1rem;
+    }
+
+    .player-color {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn {
+        padding: 15px 20px;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 100%;
+        margin-top: 10px;
+        user-select: none;
+    }
+
+    .btn:active {
+        transform: scale(0.98);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+    }
+
+    .btn-danger {
+        background: var(--danger);
+        color: white;
+        padding: 10px;
+        width: auto;
+        margin: 0;
+    }
+
+    .btn-action {
+        background: var(--success);
+        color: white;
+        font-size: 1.1rem;
+        padding: 18px;
+        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
+    }
+
+    .btn-action:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .btn-action.waiting {
+        background: var(--warning);
+        color: var(--dark);
+    }
+
+    .add-player-btn {
+        background: var(--light);
+        color: var(--dark);
+    }
+
+    /* Game Screen */
+    .game-screen {
+        display: none;
+        padding-bottom: 100px;
+    }
+
+    .game-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Top Bar */
+    .top-bar {
+        background: white;
+        border-radius: 15px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 10px;
+        z-index: 50;
+    }
+
+    .current-player {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: white;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        background: var(--primary);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        transition: all 0.3s;
+    }
+
+    .rolls-indicator {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        font-weight: 600;
+    }
+
+    .roll-dots {
+        display: flex;
+        gap: 8px;
+    }
+
+    .roll-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--light);
+        transition: all 0.3s;
+        border: 2px solid transparent;
+    }
+
+    .roll-dot.active {
+        background: var(--success);
+        box-shadow: 0 0 10px var(--success);
+        border-color: #00a085;
+    }
+
+    .roll-dot.used {
+        background: var(--danger);
+        border-color: #d63031;
+    }
+
+    /* Dice Area */
+    .dice-area {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+
+    .dice-container {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin: 25px 0;
+        min-height: 70px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    /* 3D Dice */
+    .scene {
+        width: var(--dice-size);
+        height: var(--dice-size);
+        perspective: 400px;
+        display: inline-block;
+        cursor: pointer;
+        position: relative;
+        transition: transform 0.2s;
+    }
+
+    .scene:active {
+        transform: scale(0.95);
+    }
+
+    .cube {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+
+    .cube.rolling {
+        animation: diceBounce 0.8s ease-out;
+    }
+
+    @keyframes diceBounce {
+        0% { transform: translateY(0) rotateX(0) rotateY(0) rotateZ(0); }
+        25% { transform: translateY(-40px) rotateX(180deg) rotateY(90deg) rotateZ(45deg); }
+        50% { transform: translateY(0) rotateX(360deg) rotateY(180deg) rotateZ(90deg); }
+        75% { transform: translateY(-20px) rotateX(540deg) rotateY(270deg) rotateZ(135deg); }
+        100% { transform: translateY(0) rotateX(720deg) rotateY(360deg) rotateZ(180deg); }
+    }
+
+    .cube__face {
+        position: absolute;
+        width: var(--dice-size);
+        height: var(--dice-size);
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+        backface-visibility: hidden;
+    }
+
+    .cube__face--1  { transform: rotateY(  0deg) translateZ(30px); }
+    .cube__face--2  { transform: rotateY( 90deg) translateZ(30px); }
+    .cube__face--3  { transform: rotateY(180deg) translateZ(30px); }
+    .cube__face--4  { transform: rotateY(-90deg) translateZ(30px); }
+    .cube__face--5  { transform: rotateX( 90deg) translateZ(30px); }
+    .cube__face--6  { transform: rotateX(-90deg) translateZ(30px); }
+
+    /* Dice Dots */
+    .dot-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        width: 80%;
+        height: 80%;
+        gap: 2px;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        background: #333;
+        border-radius: 50%;
+        place-self: center;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .dot.hidden { opacity: 0; }
+
+    /* Face 1: Center only */
+    .face-1 .dot:nth-child(5) { opacity: 1; }
+    .face-1 .dot:not(:nth-child(5)) { opacity: 0; }
+
+    /* Face 2: Top-left, Bottom-right */
+    .face-2 .dot:nth-child(1),
+    .face-2 .dot:nth-child(9) { opacity: 1; }
+    .face-2 .dot:not(:nth-child(1)):not(:nth-child(9)) { opacity: 0; }
+
+    /* Face 3: Diagonal */
+    .face-3 .dot:nth-child(1),
+    .face-3 .dot:nth-child(5),
+    .face-3 .dot:nth-child(9) { opacity: 1; }
+    .face-3 .dot:not(:nth-child(1)):not(:nth-child(5)):not(:nth-child(9)) { opacity: 0; }
+
+    /* Face 4: Corners */
+    .face-4 .dot:nth-child(1),
+    .face-4 .dot:nth-child(3),
+    .face-4 .dot:nth-child(7),
+    .face-4 .dot:nth-child(9) { opacity: 1; }
+    .face-4 .dot:not(:nth-child(1)):not(:nth-child(3)):not(:nth-child(7)):not(:nth-child(9)) { opacity: 0; }
+
+    /* Face 5: Corners + Center */
+    .face-5 .dot:nth-child(1),
+    .face-5 .dot:nth-child(3),
+    .face-5 .dot:nth-child(5),
+    .face-5 .dot:nth-child(7),
+    .face-5 .dot:nth-child(9) { opacity: 1; }
+    .face-5 .dot:not(:nth-child(1)):not(:nth-child(3)):not(:nth-child(5)):not(:nth-child(7)):not(:nth-child(9)) { opacity: 0; }
+
+    /* Face 6: All except center */
+    .face-6 .dot:nth-child(5) { opacity: 0; }
+    .face-6 .dot:not(:nth-child(5)) { opacity: 1; }
+
+    .scene.held .cube__face {
+        background: var(--warning);
+        border-color: #f39c12;
+        box-shadow: 0 0 20px rgba(253, 203, 110, 0.6), inset 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    .scene.held {
+        transform: translateY(-10px);
+    }
+
+    .hold-label {
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.7rem;
+        color: var(--success);
+        font-weight: 700;
+        opacity: 0;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+    }
+
+    .scene.held .hold-label {
+        opacity: 1;
+    }
+
+    .dice-hint {
+        color: #666;
+        font-size: 0.9rem;
+        margin: 15px 0;
+        min-height: 20px;
+    }
+
+    /* Scoreboard */
+    .scoreboard-section {
+        background: white;
+        border-radius: 20px;
+        padding: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .scoreboard-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+        text-align: center;
+        font-weight: 700;
+    }
+
+    .score-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .score-item {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 50px;
+    }
+
+    .score-item.header {
+        background: var(--primary);
+        color: white;
+        font-weight: 600;
+    }
+
+    .score-item.section {
+        background: var(--secondary);
+        color: white;
+        justify-content: center;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 8px;
+    }
+
+    .score-item.total {
+        background: var(--primary);
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    .cat-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        flex: 1;
+    }
+
+    .scores-row {
+        display: flex;
+        gap: 10px;
+    }
+
+    .player-score {
+        min-width: 50px;
+        text-align: center;
+        padding: 8px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+
+    .player-score.filled {
+        background: white;
+        color: var(--primary);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .player-score.empty {
+        color: #bbb;
+    }
+
+    .player-score.potential {
+        background: var(--success);
+        color: white;
+        cursor: pointer;
+        animation: pulse 1.5s infinite;
+        box-shadow: 0 4px 10px rgba(0, 184, 148, 0.3);
+    }
+
+    .player-score.potential:active {
+        transform: scale(0.95);
+    }
+
+    .player-score.bonus-yes {
+        background: var(--success);
+        color: white;
+    }
+
+    .player-score.bonus-no {
+        background: var(--light);
+        color: #666;
+        font-size: 0.75rem;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    /* Players Bar */
+    .players-bar {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding: 5px;
+        margin: 0 -5px;
+        scrollbar-width: none;
+    }
+
+    .players-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .player-chip {
+        flex-shrink: 0;
+        background: white;
+        padding: 10px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-left: 4px solid transparent;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+    }
+
+    .player-chip.active {
+        border-left-color: var(--success);
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    .player-chip .score {
+        background: var(--primary);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+    }
+
+    /* Fixed Bottom Action */
+    .fixed-action {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 15px;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+        z-index: 100;
+        display: flex;
+        gap: 10px;
+    }
+
+    .fixed-action .btn {
+        margin: 0;
+        flex: 1;
+    }
+
+    /* Modal */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.9);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        padding: 20px;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 25px;
+        padding: 40px 30px;
+        text-align: center;
+        width: 100%;
+        max-width: 350px;
+        animation: bounceIn 0.6s ease;
+    }
+
+    .winner-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: var(--success);
+        margin-bottom: 15px;
+    }
+
+    .winner-name {
+        font-size: 1.8rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
+
+    .winner-score {
+        font-size: 3.5rem;
+        font-weight: 900;
+        background: linear-gradient(45deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 20px 0;
+    }
+
+    @keyframes bounceIn {
+        0% { transform: scale(0.3); opacity: 0; }
+        50% { transform: scale(1.05); }
+        70% { transform: scale(0.9); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .yahtzee-badge {
+        background: linear-gradient(45deg, #f1c40f, #e67e22);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 8px;
+        font-size: 0.6rem;
+        margin-left: 5px;
+    }
+
+    /* Confetti */
+    .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        top: -10px;
+        animation: confetti-fall 3s linear forwards;
+        z-index: 3000;
+    }
+
+    @keyframes confetti-fall {
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Rules in setup */
+    .rules-box {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 12px;
+        margin-top: 20px;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        color: #555;
+    }
+
+    .rules-box strong {
+        color: var(--primary);
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎲 YAHTZEE</h1>
+            <button class="menu-btn" id="menuBtn">☰</button>
+        </header>
+
+```
+    <!-- Menu -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <span class="menu-title">Menu</span>
+            <button class="close-menu" id="closeMenuBtn">✕</button>
+        </div>
+        <div class="menu-item" id="rulesMenuItem">📜 Regole</div>
+        <div class="menu-item" id="newGameMenuItem">🔄 Nuova Partita</div>
+        <div class="menu-item danger" id="resetMenuItem">⚠️ Torna all'inizio</div>
+    </div>
+
+    <!-- Setup -->
+    <div class="setup-screen" id="setupScreen">
+        <h2 class="setup-title">👥 Giocatori</h2>
+        <div id="playersList"></div>
+        <button class="btn add-player-btn" id="addPlayerBtn">+ Aggiungi Giocatore</button>
+        <button class="btn btn-primary" id="startGameBtn">🎮 Inizia Partita</button>
+        
+        <div class="rules-box">
+            <strong>Come giocare:</strong><br>
+            • 3 lanci per turno<br>
+            • Tocca i dadi per tenerli<br>
+            • Puoi scegliere una categoria dopo ogni lancio<br>
+            • Bonus 35 punti se somma alta ≥ 63
+        </div>
+    </div>
+
+    <!-- Game -->
+    <div class="game-screen" id="gameScreen">
+        <div class="game-layout">
+            <!-- Players -->
+            <div class="players-bar" id="playersBar"></div>
+
+            <!-- Current Player -->
+            <div class="top-bar">
+                <div class="current-player" id="currentPlayer">-</div>
+                <div class="rolls-indicator">
+                    <span>Lanci rimasti:</span>
+                    <div class="roll-dots" id="rollDots">
+                        <div class="roll-dot"></div>
+                        <div class="roll-dot"></div>
+                        <div class="roll-dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dice -->
+            <div class="dice-area">
+                <div class="dice-container" id="diceContainer">
+                    <!-- Generated by JS -->
+                </div>
+                <div class="dice-hint" id="diceHint">Tocca "Lancia Dadi" per iniziare</div>
+            </div>
+
+            <!-- Scoreboard -->
+            <div class="scoreboard-section">
+                <div class="scoreboard-title">📊 Tabellone</div>
+                <div class="score-list" id="scoreList"></div>
+            </div>
+        </div>
+
+        <!-- Fixed Bottom Button -->
+        <div class="fixed-action">
+            <button class="btn btn-action" id="rollBtn">🎲 LANCIA DADI</button>
+        </div>
+    </div>
+</div>
+
+<!-- Rules Modal -->
+<div class="modal-overlay" id="rulesModal">
+    <div class="modal-content">
+        <div class="winner-title" style="font-size: 1.5rem;">📜 Regole Complete</div>
+        <div style="text-align: left; font-size: 0.9rem; line-height: 1.6; margin: 20px 0;">
+            <strong style="color: var(--primary);">PARTE ALTA:</strong><br>
+            Somma dei dadi del numero corrispondente.<br>
+            Totale ≥ 63 = <strong>+35 punti bonus</strong><br><br>
+            
+            <strong style="color: var(--primary);">PARTE BASSA:</strong><br>
+            • <strong>Tre Uguali:</strong> Somma tutti i dadi<br>
+            • <strong>Quattro Uguali:</strong> Somma tutti i dadi<br>
+            • <strong>Full House:</strong> 25 punti<br>
+            • <strong>Scala Piccola:</strong> 30 punti<br>
+            • <strong>Scala Grande:</strong> 40 punti<br>
+            • <strong>Yahtzee:</strong> 50 punti (5 uguali)<br>
+            • <strong>Chance:</strong> Somma tutti i dadi<br><br>
+            
+            <strong style="color: var(--primary);">BONUS YAHTZEE:</strong><br>
+            Ogni Yahtzee aggiuntivo = <strong>100 punti</strong>!
+        </div>
+        <button class="btn btn-primary" id="closeRulesBtn">Ho capito!</button>
+    </div>
+</div>
+
+<!-- Winner Modal -->
+<div class="modal-overlay" id="winnerModal">
+    <div class="modal-content">
+        <div class="winner-title">🏆 Vincitore!</div>
+        <div class="winner-name" id="winnerName">-</div>
+        <div class="winner-score" id="winnerScore">0</div>
+        <button class="btn btn-primary" id="playAgainBtn">Gioca Ancora</button>
+    </div>
+</div>
+
+<script>
+    // Game State
+    let players = [];
+    let currentPlayerIndex = 0;
+    let dice = [1, 1, 1, 1, 1];
+    let heldDice = [false, false, false, false, false];
+    let rollsLeft = 3;
+    let gameState = 'setup';
+    let isRolling = false;
+    let hasRolled = false;
+
+    const categories = [
+        { id: 'ones', name: 'Uno (1)', type: 'upper', calc: (d) => countDice(d, 1) },
+        { id: 'twos', name: 'Due (2)', type: 'upper', calc: (d) => countDice(d, 2) },
+        { id: 'threes', name: 'Tre (3)', type: 'upper', calc: (d) => countDice(d, 3) },
+        { id: 'fours', name: 'Quattro (4)', type: 'upper', calc: (d) => countDice(d, 4) },
+        { id: 'fives', name: 'Cinque (5)', type: 'upper', calc: (d) => countDice(d, 5) },
+        { id: 'sixes', name: 'Sei (6)', type: 'upper', calc: (d) => countDice(d, 6) },
+        { id: 'bonus', name: 'Bonus', type: 'bonus', calc: () => 0 },
+        { id: 'threeKind', name: 'Tre Uguali', type: 'lower', calc: (d) => threeOfAKind(d) },
+        { id: 'fourKind', name: 'Quattro Uguali', type: 'lower', calc: (d) => fourOfAKind(d) },
+        { id: 'fullHouse', name: 'Full House', type: 'lower', calc: (d) => fullHouse(d) },
+        { id: 'smallStraight', name: 'Scala Piccola', type: 'lower', calc: (d) => smallStraight(d) },
+        { id: 'largeStraight', name: 'Scala Grande', type: 'lower', calc: (d) => largeStraight(d) },
+        { id: 'yahtzee', name: 'Yahtzee', type: 'lower', calc: (d) => yahtzee(d) },
+        { id: 'chance', name: 'Chance', type: 'lower', calc: (d) => d.reduce((a, b) => a + b, 0) }
+    ];
+
+    const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c'];
+    const diceRotations = {
+        1: 'rotateX(0deg) rotateY(0deg)',
+        2: 'rotateX(0deg) rotateY(-90deg)',
+        3: 'rotateX(0deg) rotateY(-180deg)',
+        4: 'rotateX(0deg) rotateY(90deg)',
+        5: 'rotateX(-90deg) rotateY(0deg)',
+        6: 'rotateX(90deg) rotateY(0deg)'
+    };
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+        init();
+        setupEventListeners();
+    });
+
+    function setupEventListeners() {
+        // Menu
+        document.getElementById('menuBtn').addEventListener('click', toggleMenu);
+        document.getElementById('menuOverlay').addEventListener('click', toggleMenu);
+        document.getElementById('closeMenuBtn').addEventListener('click', toggleMenu);
+        
+        // Menu items
+        document.getElementById('rulesMenuItem').addEventListener('click', showRules);
+        document.getElementById('newGameMenuItem').addEventListener('click', confirmNewGame);
+        document.getElementById('resetMenuItem').addEventListener('click', resetAll);
+        
+        // Setup
+        document.getElementById('addPlayerBtn').addEventListener('click', addPlayer);
+        document.getElementById('startGameBtn').addEventListener('click', startGame);
+        
+        // Game
+        document.getElementById('rollBtn').addEventListener('click', rollDice);
+        
+        // Modals
+        document.getElementById('closeRulesBtn').addEventListener('click', closeRules);
+        document.getElementById('rulesModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('rulesModal')) closeRules();
+        });
+        document.getElementById('playAgainBtn').addEventListener('click', newGame);
+    }
+
+    function init() {
+        players = [];
+        addPlayer();
+        addPlayer();
+        createDiceElements();
+        updateDiceVisuals();
+    }
+
+    function createDiceElements() {
+        const container = document.getElementById('diceContainer');
+        container.innerHTML = '';
+        
+        for (let i = 0; i < 5; i++) {
+            const scene = document.createElement('div');
+            scene.className = 'scene';
+            scene.dataset.index = i;
+            scene.addEventListener('click', () => toggleHold(i));
+            
+            const cube = document.createElement('div');
+            cube.className = 'cube';
+            cube.id = `cube${i}`;
+            
+            // Create 6 faces
+            for (let f = 1; f <= 6; f++) {
+                const face = document.createElement('div');
+                face.className = `cube__face cube__face--${f} face-${f}`;
+                
+                const dotContainer = document.createElement('div');
+                dotContainer.className = 'dot-container';
+                
+                // Create 9 dots (3x3 grid)
+                for (let d = 0; d < 9; d++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'dot';
+                    dotContainer.appendChild(dot);
+                }
+                
+                face.appendChild(dotContainer);
+                cube.appendChild(face);
+            }
+            
+            const holdLabel = document.createElement('div');
+            holdLabel.className = 'hold-label';
+            holdLabel.textContent = 'TENUTO';
+            
+            scene.appendChild(cube);
+            scene.appendChild(holdLabel);
+            container.appendChild(scene);
+        }
+    }
+
+    function updateDiceVisuals() {
+        for (let i = 0; i < 5; i++) {
+            const cube = document.getElementById(`cube${i}`);
+            const scene = cube.parentElement;
+            
+            // Apply rotation based on dice value
+            cube.style.transform = diceRotations[dice[i]];
+            
+            // Update hold state
+            if (heldDice[i]) {
+                scene.classList.add('held');
+            } else {
+                scene.classList.remove('held');
+            }
+        }
+    }
+
+    function addPlayer() {
+        if (players.length >= 6) {
+            alert('Max 6 giocatori!');
+            return;
+        }
+        
+        players.push({
+            id: players.length,
+            name: `Giocatore ${players.length + 1}`,
+            color: colors[players.length % colors.length],
+            scores: {},
+            yahtzees: 0
+        });
+        renderSetup();
+    }
+
+    function removePlayer(idx) {
+        if (players.length <= 2) {
+            alert('Minimo 2 giocatori!');
+            return;
+        }
+        players.splice(idx, 1);
+        players.forEach((p, i) => p.id = i);
+        renderSetup();
+    }
+
+    function updateName(idx, name) {
+        players[idx].name = name || `Giocatore ${idx + 1}`;
+    }
+
+    function updateColor(idx, color) {
+        players[idx].color = color;
+        renderSetup();
+    }
+
+    function renderSetup() {
+        const list = document.getElementById('playersList');
+        list.innerHTML = players.map((p, i) => `
+            <div class="player-input">
+                <input type="text" value="${p.name}" onchange="updateName(${i}, this.value)" placeholder="Nome">
+                <input type="color" class="player-color" value="${p.color}" onchange="updateColor(${i}, this.value)">
+                ${players.length > 2 ? `<button class="btn btn-danger" onclick="removePlayer(${i})">✕</button>` : ''}
+            </div>
+        `).join('');
+    }
+
+    function startGame() {
+        if (players.length < 2) {
+            alert('Servono 2 giocatori!');
+            return;
+        }
+        
+        gameState = 'playing';
+        document.getElementById('setupScreen').style.display = 'none';
+        document.getElementById('gameScreen').style.display = 'block';
+        
+        currentPlayerIndex = 0;
+        players.forEach(p => {
+            p.scores = {};
+            p.yahtzees = 0;
+        });
+        
+        updatePlayersBar();
+        startTurn();
+    }
+
+    function startTurn() {
+        rollsLeft = 3;
+        heldDice = [false, false, false, false, false];
+        dice = [1, 1, 1, 1, 1];
+        hasRolled = false;
+        
+        if (isPlayerFinished(players[currentPlayerIndex])) {
+            nextPlayer();
+            return;
+        }
+        
+        updateDiceVisuals();
+        updateRollsIndicator();
+        updateCurrentPlayer();
+        renderScoreboard();
+        
+        const hint = document.getElementById('diceHint');
+        hint.textContent = 'Tocca "Lancia Dadi" per iniziare';
+        hint.style.color = '#666';
+    }
+
+    function isPlayerFinished(p) {
+        return categories.filter(c => c.type !== 'bonus').every(c => p.scores[c.id] !== undefined);
+    }
+
+    function rollDice() {
+        if (rollsLeft <= 0 || isRolling) return;
+        
+        isRolling = true;
+        hasRolled = true;
+        rollsLeft--;
+        
+        const rollBtn = document.getElementById('rollBtn');
+        rollBtn.disabled = true;
+        
+        const hint = document.getElementById('diceHint');
+        hint.textContent = 'Lanciando...';
+        hint.style.color = 'var(--primary)';
+        
+        // Animate
+        document.querySelectorAll('.cube').forEach((cube, i) => {
+            if (!heldDice[i]) {
+                cube.classList.add('rolling');
+                const randX = Math.floor(Math.random() * 4) * 90;
+                const randY = Math.floor(Math.random() * 4) * 90;
+                cube.style.transform = `rotateX(${randX}deg) rotateY(${randY}deg)`;
+            }
+        });
+        
+        // Generate values
+        setTimeout(() => {
+            for (let i = 0; i < 5; i++) {
+                if (!heldDice[i]) {
+                    dice[i] = Math.floor(Math.random() * 6) + 1;
+                }
+            }
+            
+            document.querySelectorAll('.cube').forEach((cube) => {
+                cube.classList.remove('rolling');
+            });
+            
+            // IMPORTANTE: set isRolling to false BEFORE rendering
+            isRolling = false;
+            rollBtn.disabled = false;
+            
+            updateDiceVisuals();
+            updateRollsIndicator();
+            updateRollButton();
+            renderScoreboard(); // Now canSelect will be true!
+            
+            if (rollsLeft > 0) {
+                hint.textContent = 'Tocca i dadi per tenerli o lancia di nuovo';
+            } else {
+                hint.textContent = '⬇️ Scegli una categoria qui sotto';
+                hint.style.color = 'var(--success)';
+                hint.style.fontWeight = '700';
+            }
+        }, 800);
+    }
+
+    function toggleHold(idx) {
+        if (!hasRolled || isRolling || gameState !== 'playing' || rollsLeft === 0) return;
+        
+        heldDice[idx] = !heldDice[idx];
+        updateDiceVisuals();
+        
+        const hint = document.getElementById('diceHint');
+        if (heldDice[idx]) {
+            hint.textContent = `✅ Dado ${idx + 1} tenuto!`;
+            hint.style.color = 'var(--success)';
+        } else {
+            hint.textContent = `❌ Dado ${idx + 1} rilasciato`;
+            hint.style.color = 'var(--danger)';
+        }
+        setTimeout(() => {
+            if (rollsLeft > 0) {
+                hint.textContent = 'Tocca i dadi per tenerli o lancia di nuovo';
+                hint.style.color = '#666';
+            }
+        }, 1000);
+    }
+
+    function updateRollsIndicator() {
+        const dots = document.querySelectorAll('.roll-dot');
+        const used = 3 - rollsLeft;
+        dots.forEach((dot, i) => {
+            dot.className = 'roll-dot';
+            if (i < used) dot.classList.add('used');
+            else dot.classList.add('active');
+        });
+    }
+
+    function updateRollButton() {
+        const btn = document.getElementById('rollBtn');
+        
+        if (rollsLeft === 0) {
+            btn.textContent = '↓ SCEGLI CATEGORIA';
+            btn.classList.add('waiting');
+            btn.disabled = true;
+        } else {
+            btn.textContent = `🎲 LANCIA (${rollsLeft})`;
+            btn.classList.remove('waiting');
+            btn.disabled = false;
+        }
+    }
+
+    function updateCurrentPlayer() {
+        const p = players[currentPlayerIndex];
+        const currentPlayerDiv = document.getElementById('currentPlayer');
+        currentPlayerDiv.textContent = p.name;
+        currentPlayerDiv.style.background = p.color;
+        updatePlayersBar();
+        updateRollButton();
+    }
+
+    function updatePlayersBar() {
+        const bar = document.getElementById('playersBar');
+        bar.innerHTML = players.map((p, i) => `
+            <div class="player-chip ${i === currentPlayerIndex ? 'active' : ''}" style="border-left-color: ${p.color}">
+                ${p.name}
+                <span class="score">${calculateTotal(p)}</span>
+                ${p.yahtzees > 0 ? `<span class="yahtzee-badge">x${p.yahtzees}</span>` : ''}
+            </div>
+        `).join('');
+    }
+
+    function renderScoreboard() {
+        const list = document.getElementById('scoreList');
+        const currentP = players[currentPlayerIndex];
+        
+        // Permetti selezione se ha fatto almeno un lancio
+        const canSelect = gameState === 'playing' && hasRolled && !isRolling;
+        
+        console.log('Rendering scoreboard - canSelect:', canSelect, 'hasRolled:', hasRolled, 'isRolling:', isRolling, 'gameState:', gameState);
+        
+        let html = '';
+        let lastType = '';
+        
+        // Header
+        html += `<div class="score-item header">
+            <div class="cat-name">Categoria</div>
+            <div class="scores-row">
+                ${players.map(p => `<div class="player-score" style="color: ${p.color}">${p.name.substring(0, 3)}</div>`).join('')}
+            </div>
+        </div>`;
+        
+        categories.forEach(cat => {
+            if (cat.type !== lastType && cat.type !== 'bonus') {
+                html += `<div class="score-item section">${cat.type === 'upper' ? 'Parte Alta' : 'Parte Bassa'}</div>`;
+                lastType = cat.type;
+            }
+            
+            if (cat.id === 'bonus') {
+                html += `<div class="score-item section">Bonus</div>`;
+            }
+            
+            html += `<div class="score-item">
+                <div class="cat-name">${cat.name}</div>
+                <div class="scores-row">`;
+            
+            players.forEach((p, idx) => {
+                const isCurrent = idx === currentPlayerIndex;
+                const hasScore = p.scores[cat.id] !== undefined;
+                
+                if (cat.type === 'bonus') {
+                    const sum = calculateUpperSum(p);
+                    const hasBonus = sum >= 63;
+                    html += `<div class="player-score ${hasBonus ? 'bonus-yes' : 'bonus-no'}">
+                        ${hasBonus ? '35 ✓' : sum + '/63'}
+                    </div>`;
+                } else if (hasScore) {
+                    html += `<div class="player-score filled">${p.scores[cat.id]}</div>`;
+                } else if (isCurrent && canSelect) {
+                    const val = cat.calc(dice);
+                    html += `<div class="player-score potential" onclick="window.selectCategory('${cat.id}')">${val}</div>`;
+                } else {
+                    html += `<div class="player-score empty">-</div>`;
+                }
+            });
+            
+            html += `</div></div>`;
+            
+            if (cat.id === 'sixes') {
+                html += `<div class="score-item" style="background: #e9ecef;">
+                    <div class="cat-name">Totale Alto</div>
+                    <div class="scores-row">
+                        ${players.map(p => `<div class="player-score">${calculateUpperSum(p)}</div>`).join('')}
+                    </div>
+                </div>`;
+            }
+        });
+        
+        // Grand Total
+        html += `<div class="score-item total">
+            <div class="cat-name">TOTALE FINALE</div>
+            <div class="scores-row">
+                ${players.map(p => `<div class="player-score" style="background: rgba(255,255,255,0.2);">${calculateTotal(p)}</div>`).join('')}
+            </div>
+        </div>`;
+        
+        list.innerHTML = html;
+    }
+
+    function selectCategory(catId) {
+        console.log('selectCategory called with:', catId, 'hasRolled:', hasRolled, 'isRolling:', isRolling);
+        
+        if (!hasRolled || isRolling || gameState !== 'playing') {
+            console.log('Cannot select - conditions not met');
+            return;
+        }
+        
+        const p = players[currentPlayerIndex];
+        const cat = categories.find(c => c.id === catId);
+        
+        if (p.scores[catId] !== undefined) {
+            console.log('Category already filled');
+            return;
+        }
+        
+        let score = cat.calc(dice);
+        console.log('Scoring:', catId, 'with score:', score);
+        
+        // Gestione Yahtzee bonus
+        if (catId === 'yahtzee' && score === 50) {
+            p.yahtzees++;
+            if (p.yahtzees > 1) {
+                score = 100;
+            }
+        }
+        
+        p.scores[catId] = score;
+        
+        if (players.every(isPlayerFinished)) {
+            endGame();
+        } else {
+            nextPlayer();
+        }
+    }
+    
+    // Make it globally accessible
+    window.selectCategory = selectCategory;
+
+    function nextPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        startTurn();
+    }
+
+    function calculateUpperSum(p) {
+        return ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes']
+            .reduce((sum, id) => sum + (p.scores[id] || 0), 0);
+    }
+
+    function calculateTotal(p) {
+        let total = calculateUpperSum(p);
+        if (total >= 63) total += 35;
+        
+        categories.filter(c => c.type === 'lower').forEach(c => {
+            total += p.scores[c.id] || 0;
+        });
+        
+        if (p.yahtzees > 1) {
+            total += (p.yahtzees - 1) * 100;
+        }
+        
+        return total;
+    }
+
+    function endGame() {
+        gameState = 'ended';
+        
+        let maxScore = -1;
+        let winners = [];
+        
+        players.forEach(p => {
+            const t = calculateTotal(p);
+            if (t > maxScore) {
+                maxScore = t;
+                winners = [p];
+            } else if (t === maxScore) winners.push(p);
+        });
+        
+        const winnerNameEl = document.getElementById('winnerName');
+        winnerNameEl.textContent = winners.length > 1 ? 'Pareggio!' : winners[0].name;
+        document.getElementById('winnerScore').textContent = maxScore;
+        
+        if (winners.length === 1) {
+            winnerNameEl.style.color = winners[0].color;
+        } else {
+            winnerNameEl.style.color = 'var(--primary)';
+        }
+        
+        document.getElementById('winnerModal').style.display = 'flex';
+        
+        // Confetti
+        for (let i = 0; i < 50; i++) {
+            setTimeout(() => {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                c.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 4000);
+            }, i * 50);
+        }
+    }
+
+    // Menu functions
+    function toggleMenu() {
+        const sideMenu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('menuOverlay');
+        
+        if (sideMenu.classList.contains('open')) {
+            sideMenu.classList.remove('open');
+            overlay.classList.remove('show');
+        } else {
+            sideMenu.classList.add('open');
+            overlay.classList.add('show');
+        }
+    }
+
+    function showRules() {
+        toggleMenu();
+        document.getElementById('rulesModal').style.display = 'flex';
+    }
+
+    function closeRules() {
+        document.getElementById('rulesModal').style.display = 'none';
+    }
+
+    function confirmNewGame() {
+        toggleMenu();
+        if (confirm('Nuova partita con gli stessi giocatori?')) {
+            currentPlayerIndex = 0;
+            players.forEach(p => {
+                p.scores = {};
+                p.yahtzees = 0;
+            });
+            startTurn();
+        }
+    }
+
+    function resetAll() {
+        toggleMenu();
+        if (confirm('Tornare alla schermata iniziale?')) newGame();
+    }
+
+    function newGame() {
+        document.getElementById('winnerModal').style.display = 'none';
+        document.getElementById('gameScreen').style.display = 'none';
+        document.getElementById('setupScreen').style.display = 'block';
+        gameState = 'setup';
+        players = [];
+        init();
+    }
+
+    // Scoring functions
+    function countDice(dice, val) {
+        return dice.filter(d => d === val).reduce((a, b) => a + b, 0);
+    }
+
+    function threeOfAKind(d) {
+        const counts = {};
+        d.forEach(v => counts[v] = (counts[v] || 0) + 1);
+        return Object.values(counts).some(c => c >= 3) ? d.reduce((a, b) => a + b, 0) : 0;
+    }
+
+    function fourOfAKind(d) {
+        const counts = {};
+        d.forEach(v => counts[v] = (counts[v] || 0) + 1);
+        return Object.values(counts).some(c => c >= 4) ? d.reduce((a, b) => a + b, 0) : 0;
+    }
+
+    function fullHouse(d) {
+        const counts = {};
+        d.forEach(v => counts[v] = (counts[v] || 0) + 1);
+        const vals = Object.values(counts);
+        return vals.includes(3) && vals.includes(2) ? 25 : 0;
+    }
+
+    function smallStraight(d) {
+        const unique = [...new Set(d)].sort();
+        const str = unique.join('');
+        return ['1234', '2345', '3456'].some(s => str.includes(s)) ? 30 : 0;
+    }
+
+    function largeStraight(d) {
+        const sorted = [...d].sort().join('');
+        return sorted === '12345' || sorted === '23456' ? 40 : 0;
+    }
+
+    function yahtzee(d) {
+        return d.every(v => v === d[0]) ? 50 : 0;
+    }
+</script>
+```
+
+</body>
+</html>
