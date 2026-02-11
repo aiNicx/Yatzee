@@ -1,0 +1,121 @@
+/* ========================================
+   Setup Screen - Player Configuration
+   ======================================== */
+
+.setup-screen {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin: 10px;
+    box-shadow: var(--shadow-xl);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeIn 0.4s ease;
+}
+
+.setup-title {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.player-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.player-input input[type="text"] {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--secondary);
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color var(--transition-fast);
+}
+
+.player-input input[type="text"]:focus {
+    border-color: var(--primary);
+}
+
+.player-color {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.add-player-btn {
+    background: var(--light);
+    color: var(--dark);
+}
+
+.rules-box {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: var(--radius-md);
+    margin-top: 20px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #555;
+}
+
+.rules-box strong {
+    color: var(--primary);
+}
+
+/* Player suggestion dropdown */
+.player-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 45px;
+    background: white;
+    border: 2px solid var(--secondary);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    max-height: 120px;
+    overflow-y: auto;
+    z-index: 10;
+    display: none;
+}
+
+.player-suggestions.visible {
+    display: block;
+}
+
+.player-suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background var(--transition-fast);
+}
+
+.player-suggestion-item:hover {
+    background: var(--light);
+}
+
+.player-input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.setup-back-btn {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 5px 0;
+    margin-bottom: 10px;
+}
+
+.setup-back-btn:hover {
+    text-decoration: underline;
+}
