@@ -1,0 +1,239 @@
+/* ========================================
+   Yahtzee Scoreboard Styles
+   ======================================== */
+
+/* Game Screen */
+.game-screen {
+    padding-bottom: 100px;
+    animation: fadeIn 0.4s ease;
+}
+
+.game-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Top Bar */
+.top-bar {
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 10px;
+    z-index: 50;
+}
+
+.current-player {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: var(--primary);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: all var(--transition-normal);
+}
+
+.rolls-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    font-weight: 600;
+}
+
+.roll-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.roll-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--light);
+    transition: all var(--transition-normal);
+    border: 2px solid transparent;
+}
+
+.roll-dot.active {
+    background: var(--success);
+    box-shadow: 0 0 10px var(--success);
+    border-color: #00a085;
+}
+
+.roll-dot.used {
+    background: var(--danger);
+    border-color: #d63031;
+}
+
+/* Players Bar */
+.players-bar {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 5px;
+    margin: 0 -5px;
+    scrollbar-width: none;
+}
+
+.players-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.player-chip {
+    flex-shrink: 0;
+    background: white;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-left: 4px solid transparent;
+    font-size: 0.9rem;
+    transition: all var(--transition-normal);
+}
+
+.player-chip.active {
+    border-left-color: var(--success);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+}
+
+.player-chip .score {
+    background: var(--primary);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+}
+
+/* Scoreboard */
+.scoreboard-section {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 15px;
+    box-shadow: var(--shadow-lg);
+}
+
+.scoreboard-title {
+    font-size: 1.2rem;
+    color: var(--primary);
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.score-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.score-item {
+    background: #f8f9fa;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 50px;
+}
+
+.score-item.header {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+}
+
+.score-item.section {
+    background: var(--secondary);
+    color: white;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px;
+}
+
+.score-item.total {
+    background: var(--primary);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.cat-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    flex: 1;
+}
+
+.scores-row {
+    display: flex;
+    gap: 10px;
+}
+
+.player-score {
+    min-width: 50px;
+    text-align: center;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: all var(--transition-fast);
+}
+
+.player-score.filled {
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.player-score.empty {
+    color: #bbb;
+}
+
+.player-score.potential {
+    background: var(--success);
+    color: white;
+    cursor: pointer;
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 4px 10px rgba(0, 184, 148, 0.3);
+}
+
+.player-score.potential:active {
+    transform: scale(0.95);
+}
+
+.player-score.bonus-yes {
+    background: var(--success);
+    color: white;
+}
+
+.player-score.bonus-no {
+    background: var(--light);
+    color: #666;
+    font-size: 0.75rem;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.yahtzee-badge {
+    background: linear-gradient(45deg, #f1c40f, #e67e22);
+    color: white;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-size: 0.6rem;
+    margin-left: 5px;
+}

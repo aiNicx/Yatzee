@@ -1,0 +1,249 @@
+/* ========================================
+   Home Screen - Game Selection
+   ======================================== */
+
+.home-screen {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px 10px;
+    animation: fadeIn 0.4s ease;
+}
+
+.home-logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.home-logo h2 {
+    font-size: 2rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    margin-bottom: 5px;
+}
+
+.home-logo p {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.95rem;
+}
+
+/* Resume Section (multiple suspended games) */
+.resume-section {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Resume Banner */
+.resume-banner {
+    background: linear-gradient(135deg, var(--success), #00a085);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.resume-banner:hover,
+.resume-banner:active {
+    transform: scale(0.98);
+    box-shadow: var(--shadow-xl);
+}
+
+.resume-banner-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.resume-banner-text h3 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.resume-banner-text p {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+.resume-banner-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.resume-btn {
+    background: rgba(255,255,255,0.25);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+}
+
+.resume-btn:hover {
+    background: rgba(255,255,255,0.4);
+}
+
+.resume-btn.discard {
+    background: rgba(0,0,0,0.2);
+}
+
+/* Game Cards Grid */
+.games-section-title {
+    color: rgba(255,255,255,0.9);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.game-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 25px 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    border: none;
+    font-family: inherit;
+    color: inherit;
+    width: 100%;
+}
+
+.game-card:active {
+    transform: scale(0.96);
+}
+
+.game-card:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px);
+}
+
+.game-card.coming-soon {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.game-card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.game-card-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--dark);
+    margin-bottom: 4px;
+}
+
+.game-card-desc {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.game-card-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--warning);
+    color: var(--dark);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+}
+
+/* History Section */
+.history-section {
+    margin-top: 10px;
+}
+
+.history-section-title {
+    color: rgba(255,255,255,0.9);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.history-item {
+    background: rgba(255,255,255,0.95);
+    border-radius: var(--radius-md);
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.history-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.history-item-game {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--dark);
+}
+
+.history-item-date {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.history-item-players {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.history-item-winner {
+    text-align: right;
+}
+
+.history-item-winner-name {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--success);
+}
+
+.history-item-winner-score {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.no-history {
+    text-align: center;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.9rem;
+    padding: 20px;
+}
