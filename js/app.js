@@ -5,6 +5,7 @@
 
 import { gameRegistry } from './games/GameRegistry.js';
 import { YahtzeeGame } from './games/yahtzee/YahtzeeGame.js';
+import { FarkleGame } from './games/farkle/FarkleGame.js';
 import { HomeScreen } from './screens/HomeScreen.js';
 import { SetupScreen } from './screens/SetupScreen.js';
 import { gameHistory } from './services/GameHistoryService.js';
@@ -18,6 +19,17 @@ gameRegistry.register('yahtzee', {
     maxPlayers: 6,
     createGame: (container, players, onExit, savedState) => {
         return new YahtzeeGame({ container, players, onExit, savedState });
+    }
+});
+
+gameRegistry.register('farkle', {
+    name: 'Farkle (10.000)',
+    icon: '🎯',
+    description: 'Raggiungi 10.000 punti per primo!',
+    minPlayers: 2,
+    maxPlayers: 6,
+    createGame: (container, players, onExit, savedState) => {
+        return new FarkleGame({ container, players, onExit, savedState });
     }
 });
 

@@ -126,6 +126,7 @@ export class YahtzeeGame {
         this.menu = new Menu({
             items: [
                 { id: 'rules', label: '📜 Regole' },
+                { id: 'history', label: '📊 Storico Partite' },
                 { id: 'newGame', label: '🔄 Nuova Partita' },
                 { id: 'home', label: '⚠️ Torna alla Home', danger: true }
             ],
@@ -136,6 +137,10 @@ export class YahtzeeGame {
         // Rules Modal
         this.rulesModal = new Modal({ id: 'rulesModal' });
         this.rulesModal.render(this.container);
+
+        // History Modal
+        this.historyModal = new Modal({ id: 'historyModal' });
+        this.historyModal.render(this.container);
         this.rulesModal.setContent(`
             <div class="winner-title" style="font-size: 1.5rem;">📜 Regole Complete</div>
             <div style="text-align: left; font-size: 0.9rem; line-height: 1.6; margin: 20px 0;">
@@ -431,6 +436,9 @@ export class YahtzeeGame {
             case 'rules':
                 this.rulesModal.show();
                 break;
+            case 'history':
+                this._showHistory();
+                break;
             case 'newGame':
                 if (confirm('Nuova partita con gli stessi giocatori?')) {
                     gameHistory.removeActiveGame(this.gameId);
@@ -445,6 +453,44 @@ export class YahtzeeGame {
                 }
                 break;
         }
+    }
+
+    // ---- History ----
+
+    _showHistory() {
+        const matches = gameHistory.getMatchHistory().filter(m => m.gameType === 'yahtzee');
+        let html;
+        if (matches.length === 0) {
+            html = '<div style="text-align:center;color:#999;padding:20px;">Nessuna partita completata ancora.</div>';
+        } else {
+            html = '<div style="display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow-y:auto;">';
+            matches.slice(0, 20).forEach(match => {
+                const winner = match.players.find(p => p.isWinner);
+                const dateStr = gameHistory.formatDate(match.date);
+                html += `
+                    <div style="background:#f8f9fa;border-radius:10px;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <div style="font-size:0.75rem;color:#999;">${dateStr}</div>
+                            <div style="font-size:0.8rem;color:#666;">${match.players.map(p => p.name).join(', ')}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-weight:700;font-size:0.9rem;color:var(--success);">${winner ? '🏆 ' + winner.name : 'Pareggio'}</div>
+                            <div style="font-size:0.75rem;color:#999;">${winner ? winner.finalScore + ' pts' : ''}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+        }
+
+        this.historyModal.setContent(`
+            <div class="winner-title" style="font-size: 1.5rem;">📊 Storico Partite</div>
+            <div style="margin: 15px 0;">${html}</div>
+            <button class="btn btn-primary" id="closeHistoryBtn">Chiudi</button>
+        `);
+        this.historyModal.show();
+        this.historyModal.contentEl.querySelector('#closeHistoryBtn')
+            .addEventListener('click', () => this.historyModal.hide());
     }
 
     // ---- Save/Restore ----
@@ -507,6 +553,7 @@ export class YahtzeeGame {
         if (this.diceRenderer) this.diceRenderer.destroy();
         if (this.menu) this.menu.destroy();
         if (this.rulesModal) this.rulesModal.destroy();
+        if (this.historyModal) this.historyModal.destroy();
         if (this.winnerModal) this.winnerModal.destroy();
         this.container.innerHTML = '';
     }
